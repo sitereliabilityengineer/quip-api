@@ -36,6 +36,7 @@ import ssl
 import sys
 import time
 import xml.etree.cElementTree
+from bs4 import BeautifulSoup
 
 PY3 = sys.version_info > (3,)
 
@@ -414,6 +415,63 @@ class QuipClient(object):
         }
         args.update(kwargs)
         return self._fetch_json("threads/edit-document", post_data=args)
+    
+    def create_spreadsheet(self, thread_id, column_names, title="Spreadsheet", format="html",
+                       doc_type="spreadsheet", **kwargs):
+        """Creates a new spreadsheet in the given Quip document, with the specified columns.
+
+        Args:
+            thread_id (str): The thread ID where the spreadsheet will be added.
+            column_names (list): A list of column names for the spreadsheet.
+            title (str): The title of the spreadsheet. Default is "Spreadsheet".
+            operation (str): The operation to apply (e.g., "APPEND"). Default is "APPEND".
+            format (str): The format of the content, default is "html".
+            doc_type (str): The type of the document, default is "spreadsheet".
+            **kwargs: Additional keyword arguments to pass to the request.
+
+        Returns:
+            dict: The response from the Quip API when creating the spreadsheet.
+        
+        Tips to Get thread_id
+            client = quip.QuipClient(access_token=quip_token)
+            thread = client.get_thread(quip_doc_id)
+            thread_id = thread['thread']['id']
+
+        Example:
+            # Example usage:
+            thread_id = "your_thread_id"
+            column_names = ["name", "id", "status"]
+            create_spreadsheet(thread_id, column_names)
+
+        """
+
+        # Generate the header row based on the provided column names
+        header_row = "".join([f"<th>{col}</th>" for col in column_names])
+        
+        # Generate the template with the dynamic columns
+        spreadsheet_template = f"""\
+        <table title='{title}'>
+            <tr>
+                {header_row}
+            </tr>
+            <tr>
+                {"".join(["<td></td>" for _ in column_names])}
+            </tr>
+        </table>
+        """
+
+        # Prepare the arguments for the API request
+        args = {
+            "thread_id": thread_id,
+            "content": spreadsheet_template,
+            "location": "APPEND",
+            "format": format,
+            "type": doc_type
+        }
+        args.update(kwargs)
+        
+        # Call the API to edit the document and create the spreadsheet
+        return self._fetch_json("threads/edit-document", post_data=args)
 
     def add_to_first_list(self, thread_id, *items, **kwargs):
         """Adds the given items to the first list in the given document.
@@ -584,7 +642,12 @@ class QuipClient(object):
             document_html = self.get_thread(thread_id).get("html")
             if not document_html:
                 return None
-        tree = self.parse_document_html(document_html)
+        # Addedd next two lines to use BeautifulSoup. If not, sometimes will give an error
+        # ParseError: mismatched tag: line 2029, column 2
+        # xml.etree.cElementTree
+        soup = BeautifulSoup(document_html, 'html.parser')
+        tree = self.parse_document_html(str(soup))
+        #tree = self.parse_document_html(document_html)
         element = list(tree.iterfind(".//*[@title='%s']" % name))
         if not element:
             return None
