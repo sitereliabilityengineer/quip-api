@@ -12,6 +12,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# Modifications to the Quip.py library by Koldo Oteo on November 15th 2024
+# Changes made:
+# - Updated the 'add_spreadsheet_row' method to fix issue with dynamic row updates.
+# - Created new function 'create_spreadsheet' to add spreadsheet templates with dynamic column headers.
+
+
 """A Quip API client library.
 
 For full API documentation, visit https://quip.com/api/.
@@ -418,7 +424,10 @@ class QuipClient(object):
     
     def create_spreadsheet(self, thread_id, column_names, title="Spreadsheet", format="html",
                        doc_type="spreadsheet", **kwargs):
-        """Creates a new spreadsheet in the given Quip document, with the specified columns.
+        """
+        Modifications to the Quip.py library by Koldo Oteo on November 15th 2024
+        
+        Creates a new spreadsheet in the given Quip document, with the specified columns.
 
         Args:
             thread_id (str): The thread ID where the spreadsheet will be added.
@@ -563,6 +572,9 @@ class QuipClient(object):
 
     def add_spreadsheet_row(
             self, thread_id, spreadsheet, updates, headers=None, **args):
+        """
+            Modifications to the Quip.py library by Koldo Oteo on November 15th 2024
+        """
         if not headers:
             headers = self.get_spreadsheet_header_items(spreadsheet)
         indexed_items = {}
