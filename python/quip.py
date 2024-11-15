@@ -422,7 +422,7 @@ class QuipClient(object):
         args.update(kwargs)
         return self._fetch_json("threads/edit-document", post_data=args)
     
-    def create_spreadsheet(self, thread_id, column_names, title="Spreadsheet", format="html",
+    def create_spreadsheet(self, thread_id, column_names, spreadsheet_name="Spreadsheet", format="html",
                        doc_type="spreadsheet", **kwargs):
         """
         Modifications to the Quip.py library by Koldo Oteo on November 15th 2024
@@ -432,7 +432,7 @@ class QuipClient(object):
         Args:
             thread_id (str): The thread ID where the spreadsheet will be added.
             column_names (list): A list of column names for the spreadsheet.
-            title (str): The title of the spreadsheet. Default is "Spreadsheet".
+            spreadsheet_name (str): The title of the spreadsheet. Default is "Spreadsheet".
             operation (str): The operation to apply (e.g., "APPEND"). Default is "APPEND".
             format (str): The format of the content, default is "html".
             doc_type (str): The type of the document, default is "spreadsheet".
@@ -459,7 +459,7 @@ class QuipClient(object):
         
         # Generate the template with the dynamic columns
         spreadsheet_template = f"""\
-        <table title='{title}'>
+        <table title='{spreadsheet_name}'>
             <tr>
                 {header_row}
             </tr>
