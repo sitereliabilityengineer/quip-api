@@ -1,0 +1,8 @@
+NOTICE: Changes made to the Quip.py library by Koldo Oteo - Friday 15th November 2024
+
+Modifications made to the Quip.py library:
+- [Friday 15th November 2024]: Added functionality to handle dynamic headers in spreadsheet creation.
+- [Friday 15th November 2024]: Corrected issue in the `add_spreadsheet_row` method to properly update rows in Quip documents.
+- [Friday 15th November 2024]: Implemented a new method `create_spreadsheet` for creating new spreadsheets dynamically based on column names.
+
+This software is licensed under the Apache License, Version 2.0. See LICENSE for more details.
